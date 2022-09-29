@@ -1,0 +1,477 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title> API Apply Jobs </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>List of Apply Jobs</h1>
+
+        <table id="myTable" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th class="col-2">Apply Job ID</th>
+                    <th class="col-2">Applicant Name</th>
+                    <th class="col-2">Contact No</th>
+                    <th class="col-2">Email</th>
+                    <th class="col-2">Applied At</th>
+                    <th class="col-1">Post Job</th>
+
+                    <th class="col-1 text-center">
+                        <button class="btn btn-sm btn-secondary" onclick="fAddNew()">Add new</button>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <p><a href="/">Back to home page</a></p>
+    </div>
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Apply Jobs Info</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="txtApplyJobId" class="control-label">Apply Job ID:</label>
+                            <input id="txtApplyJobId" name="txtApplyJobId" class="form-control" readonly="readonly" />
+                        </div>
+                        <div class="form-group">
+                            <label for="txtApplicantName" class="control-label">Applicant Name:</label>
+                            <input id="txtApplicantName" name="txtApplicantName" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="txtContactNo" class="control-label">Contact No:</label>
+                            <input id="txtContactNo" name="txtContactNo" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="txtEmail" class="control-label">Email:</label>
+                            <input id="txtEmail" name="txtEmail" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="txtAppliedAt" class="control-label">Applied at:</label>
+                            <input id="txtAppliedAt" name="txtAppliedAt" class="form-control" readonly="readonly" />
+                        </div>
+                        <div class="form-group">
+                            <label for="PostJobId" class="control-label"></label>
+                            <select id="dropdownPostJobId" class="form-control" asp-items="ViewBag.JobCategoryId"></select>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="fSave()">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var currentMode = '';
+
+        function fAddNew() {
+            currentMode = 'NEW';
+
+            // empty the form fields
+            $('#txtApplyJobId').val('');
+            $('#txtApplicantName').val('');
+            $('#txtContactNo').val('');
+            $('#txtEmail').val('');
+            $('#txtAppliedAt').val('');
+            $('#dropdownPostJobId').val()
+            // popup the modal window
+            $('#myModal').modal();
+        }
+
+        function fSave() {
+            if (currentMode === 'NEW') {
+                let data = {
+                    // "applyJobId": parseInt( $('#txtApplyJobId').val() ),
+                    "applicantName": $('#txtApplicantName').val(),
+                    "contactNo": $('#txtContactNo').val(),
+                    "email": $('#txtEmail').val(),
+                    "appliedAt": $('#txtAppliedAt').val(Date.now.toString())
+                };
+
+                console.log(data);
+
+                // Save the data using the API
+                const xmlHttp = new XMLHttpRequest();
+                const url = '/api/applyJobs';
+                xmlHttp.open('POST', url);
+                xmlHttp.setRequestHeader('content-type', 'application/json');
+                xmlHttp.send(JSON.stringify(data));
+                xmlHttp.onload = function () {
+                    console.log(xmlHttp.responseText);
+                    let responseObject = JSON.parse(xmlHttp.responseText);
+                    console.log(responseObject.statusCode);
+                    if (responseObject.statusCode == 201) {         // HTTP Response Code 201 "CREATED"
+                        fLoadData();                                // repopulate the HTML Table
+                        alert("Newly inserted apply job ID: " + responseObject.value.applyJobId);
+                    }
+                };
+            }
+            else if (currentMode === 'EDIT') {
+                let data = {
+                    "categoryId": parseInt($('#txtCategoryId').val()),
+                    "categoryName": $('#txtCategoryName').val()
+                };
+
+                const xmlHttp = new XMLHttpRequest();
+                const url = '/api/Categories/' + data.categoryId;           // HTTP PUT /api/Categories/2
+                xmlHttp.open('PUT', url);
+                xmlHttp.setRequestHeader('content-type', 'application/json');
+                xmlHttp.send(JSON.stringify(data));
+                xmlHttp.onload = function () {
+                    console.log(xmlHttp.responseText);                       // nothing is returned from the API
+                    if (xmlHttp.status == 204)                               // HTTP RESPONSE 204 "No Content"
+                    {
+                        alert('updated successfully!');
+                        fLoadData();            // reload the HTML Table.
+                    }
+                };
+            }
+            };
+
+           
+        
+
+        function fDelete(applyJobIdToDelete) {
+
+            if (!confirm("Are you sure you want to delete?")) {
+                return;         // exit the function, since user does not want to delete.
+            }
+
+            // delete the selected category.
+            let data = {
+                "id": applyJobIdToDelete
+            };
+            const xmlHttp = new XMLHttpRequest();
+            const url = '/api/applyJobs/' + applyJobIdToDelete;        // HTTP REST API DELETE : /api/Categories/2
+            xmlHttp.open('DELETE', url);
+            xmlHttp.setRequestHeader('content-type', 'application/json');
+            xmlHttp.send(JSON.stringify(data));
+            xmlHttp.onload = function () {
+                let responseObject = JSON.parse(xmlHttp.responseText);
+                alert("Successfully Deleted the apply job ID: " + responseObject.ApplyJobId);
+                fLoadData();
+            };
+        }
+
+        // Retreive the Category to edit from the REST API, and pouplate the modal window to show the record to edit.
+        function fEdit(applyJobIdToEdit) {
+            currentMode = 'EDIT';
+            let data = {
+                "id": applyJobIdToEdit
+            };
+            const xmlHttp = new XMLHttpRequest();
+            const url = '/api/applyJobs/' + applyJobIdToEdit;        // HTTP REST API GET : /api/Categories/2
+            xmlHttp.open('GET', url);
+            xmlHttp.setRequestHeader('content-type', 'application/json');
+            xmlHttp.send(JSON.stringify(data));
+            xmlHttp.onload = function () {
+                let responseObject = JSON.parse(xmlHttp.responseText);
+
+                // populate the input fields in the modal window
+                $('#txtApplyJobId').val(responseObject.applyJobId);
+                $('#txtApplicantName').val(responseObject.applicantName);
+                $('#txtContactNo').val(responseObject.applyContactNo);
+                $('#txtEmail').val(responseObject.Email);
+                $('#txtAppliedAt').val(responseObject.appliedAt);
+
+                $('#myModal').modal("show");
+            }
+        }
+
+
+
+        function fDisplayData(theJsonData) {
+
+            let strHTML = '';
+
+            $.each(theJsonData, function (idx, elem) {
+                console.log(elem);               // for debugging
+
+                strHTML
+                    += '<tr>'
+                    + '<td>' + elem.applyJobId + '</td>'
+                    + '<td>' + elem.applicantName + '</td>'
+                    + '<td>' + elem.contactNo + '</td>'
+                    + '<td>' + elem.email + '</td>'
+                    + '<td>' + elem.appliedAt + '</td>'
+                + '<td class="text-center">'
+                + '<button type="button" class="btn btn-secondary btn-sm" onclick="fEdit(' + elem.applyJobId + ')">Edit</button>'
+                + '&nbsp;'
+                + '<button type="button" class="btn btn-secondary btn-sm" onclick="fDelete(' + elem.applyJobId + ')">Delete</button>'
+                    + '</td>'
+                    + '</tr>';
+            });
+
+            // Remove all existing rows in the Table
+            $('#myTable tbody tr').remove();
+
+            // Add the generated table row contents.
+            $('#myTable tbody').append(strHTML);
+        }
+
+
+        function fLoadData() {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let theData = JSON.parse(this.responseText);
+                    console.log(theData);                           // for debugging
+                    // alert("Received the data from the APi");     // for debugging
+                    fDisplayData(theData);
+                }
+            };
+            xmlHttp.open("GET", "/api/applyJobs");
+            xmlHttp.send();
+        }
+
+        $(document).ready(() => {
+            fLoadData();
+        });
+
+    </script>
+
+    <!-- The Modal -->
+    <!--<div class="modal fade" id="myModal1">
+        <div class="modal-dialog">
+            <div class="modal-content">-->
+    <!-- Modal Header -->
+    <!--<div class="modal-header">
+        <h4 class="modal-title">Applied Jobs Information</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>-->
+    <!-- Modal body -->
+    <!--<div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="txtApplyJobId" class="control-label">Apply Job ID:</label>
+                <input id="txtApplyJobId" name="txtApplyJobId" class="form-control" readonly="readonly" />
+            </div>
+            <div class="form-group">
+                <label for="txtApplicantName" class="control-label">Applicant Name:</label>
+                <input id="txtApplicantName" name="txtApplicantName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="txtContactNo" class="control-label">Contact No:</label>
+                <input id="txtContactNo" name="txtContactNo" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="txtEmail" class="control-label">Contact No:</label>
+                <input id="txtEmail" name="txtEmail" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="txtAppliedAt" class="control-label">Contact No:</label>
+                <input id="txtAppliedAt" name="txtAppliedAt" class="form-control" />
+            </div>
+        </form>
+    </div>-->
+    <!-- Modal footer -->
+    <!--<div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="fSave()">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var currentMode = '';
+
+        function fAddNew() {
+
+            currentMode = 'NEW';
+
+            // empty the form fields
+            $('#txtApplyJobId').val('');
+            $('#txtApplicantName').val('');
+            $('#txtContactNo').val('');
+            $('#txtEmail').val('');
+            $('#txtAppliedAt').val('');
+
+            // popup the modal window
+            $('#myModal1').modal();
+        }
+
+        function fSave() {
+            if (currentMode === 'NEW') {
+                let data = {
+                    // "applyJobId": parseInt( $('#txtApplyJobId').val() ),
+                    "applicantName": $('#txtApplicantName').val(),
+                    "contactNo": $('#txtContactNo').val(),
+                    "Email": $('#txtEmail').val(),
+                    "appliedAt": $('#txtAppliedAt').val()
+                };
+
+                console.log(data);
+
+                // Save the data using the API
+                const xmlHttp = new XMLHttpRequest();
+                const url = '/api/applyJobs';
+                xmlHttp.open('POST', url);
+                xmlHttp.setRequestHeader('content-type', 'application/json');
+                xmlHttp.send(JSON.stringify(data));
+                xmlHttp.onload = function () {
+                    console.log(xmlHttp.responseText);
+                    let responseObject = JSON.parse(xmlHttp.responseText);
+                    console.log(responseObject.statusCode);
+                    if (responseObject.statusCode == 201) {         // HTTP Response Code 201 "CREATED"
+                        fLoadData();                                // repopulate the HTML Table
+                        alert("Newly inserted Apply Job ID: " + responseObject.value.categoryId);
+                    }
+                };
+            }
+            else if (currentMode === 'EDIT') {
+                let data = {
+                    "applyJobId": parseInt($('#txtApplyJobId').val()),
+                    "applicantName": $('#txtApplicantName').val(),
+                    "contactNo": $('#txtContactNo').val(),
+                    "Email": $('#txtEmail').val(),
+                    "appliedAt": $('#txtAppliedAt').val()
+                };
+
+                const xmlHttp = new XMLHttpRequest();
+                const url = '/api/applyJobs/' + data.jobCategoryId;           // HTTP PUT /api/Categories/2
+                xmlHttp.open('PUT', url);
+                xmlHttp.setRequestHeader('content-type', 'application/json');
+                xmlHttp.send(JSON.stringify(data));
+                xmlHttp.onload = function () {
+                    console.log(xmlHttp.responseText);                       // nothing is returned from the API
+                    if (xmlHttp.status == 204)                               // HTTP RESPONSE 204 "No Content"
+                    {
+                        alert('updated successfully!');
+                        fLoadData();            // reload the HTML Table.
+                    }
+                };
+            }
+
+
+        }
+
+        function fDelete(applyJobIdToDelete) {
+
+            if (!confirm("Are you sure you want to delete?")) {
+                return;         // exit the function, since user does not want to delete.
+            }
+
+            // delete the selected category.
+            let data = {
+                "id": applyJobIdToDelete
+            };
+            const xmlHttp = new XMLHttpRequest();
+            const url = '/api/applyJobs/' + applyJobIdToDelete;        // HTTP REST API DELETE : /api/Categories/2
+            xmlHttp.open('DELETE', url);
+            xmlHttp.setRequestHeader('content-type', 'application/json');
+            xmlHttp.send(JSON.stringify(data));
+            xmlHttp.onload = function () {
+                let responseObject = JSON.parse(xmlHttp.responseText);
+                alert("Successfully Deleted the Apply Job ID: " + responseObject.categoryId);
+                fLoadData();
+            };
+        }
+
+        // Retreive the Category to edit from the REST API, and pouplate the modal window to show the record to edit.
+        function fEdit(applyJobIdToEdit) {
+            currentMode = 'EDIT';
+
+            let data = {
+                "id": applyJobIdToEdit
+            };
+            const xmlHttp = new XMLHttpRequest();
+            const url = '/api/applyJobs/' + jobCategoryIdToEdit;        // HTTP REST API GET : /api/Categories/2
+            xmlHttp.open('GET', url);
+            xmlHttp.setRequestHeader('content-type', 'application/json');
+            xmlHttp.send(JSON.stringify(data));
+            xmlHttp.onload = function () {
+                let responseObject = JSON.parse(xmlHttp.responseText);
+
+                // populate the input fields in the modal window
+                $('#txtApplyJobId').val(responseObject.applyJobId);
+                $('#txtApplicantName').val(responseObject.applicantName);
+                $('#txtContactNo').val(responseObject.applyContactNo);
+                $('#txtEmail').val(responseObject.Email);
+                $('#txtAppliedAt').val(responseObject.appliedAt);
+
+                $('#myModal1').modal("show");
+            }
+        }
+
+        function fDisplayData(theJsonData) {
+
+            let strHTML = '';
+
+            $.each(theJsonData, function (idx, elem) {
+                console.log(elem);               // for debugging
+
+                strHTML
+                    += '<tr>'
+                    + '<td>' + elem.applyJobId + '</td>'
+                + '<td>' + elem.applicantName + '</td>'
+                + '<td>' + elem.contactNo + '</td>'
+                + '<td>' + elem.Email + '</td>'
+                + '<td>' + elem.appliedAt + '</td>'
+                + '<td class="text-center">'
+                + '<button type="button" class="btn btn-secondary btn-sm" onclick="fEdit(' + elem.applyJobId + ')">Edit</button>'
+                + '&nbsp;'
+                + '<button type="button" class="btn btn-secondary btn-sm" onclick="fDelete(' + elem.applyJobId + ')">Delete</button>'
+                    + '</td>'
+                    + '</tr>';
+            });
+
+            // Remove all existing rows in the Table
+            $('#myTable1 tbody tr').remove();
+
+            // Add the generated table row contents.
+            $('#myTable1 tbody').append(strHTML);
+        }
+
+
+        function fLoadData() {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let theData1 = JSON.parse(this.responseText);
+
+                    console.log(theData1);
+                    //alert("Received the data from the APi");
+                    fDisplayData(theData11);
+                }
+            };
+            xmlHttp.open("GET", "/api/applyJobs");
+            xmlHttp.send();
+        }
+
+        $(document).ready(() => {
+            fLoadData();
+        });
+
+    </script>-->
+
+</body>
+</html>

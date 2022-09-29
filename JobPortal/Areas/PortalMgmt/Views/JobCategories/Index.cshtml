@@ -1,0 +1,75 @@
+﻿@model IEnumerable<JobPortal.Models.JobCategory>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@using Microsoft.AspNetCore.Identity
+@using JobPortal.Models.Enums
+
+@*----- to find if user is logged in *@
+@inject SignInManager<IdentityUser> _signInManager
+
+@*----- gets the user object to see properties, roles *@
+@inject UserManager<IdentityUser> _userManager
+
+@{
+    bool isLoggedIn = _signInManager.IsSignedIn(this.User);
+
+    bool isUserAdmin = false;
+    IdentityUser user = await _userManager.GetUserAsync(this.User);         // gets the Logged In User
+    if (user != null)
+    {
+        isUserAdmin = await _userManager.IsInRoleAsync(user, MyIdentityRoleNames.PortalAdmin.ToString());
+    }
+
+}
+
+<h1 class="text-danger">Job Categories</h1>
+@if(isLoggedIn && isUserAdmin) {
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+}
+<table class="table table-bordered table-active table-striped table-hover" >
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.JobCategoryName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+           <th>
+               Number Of Jobs
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.JobCategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+                <td>
+                    @item.PostJobs.Count()
+                </td>
+                @if (isLoggedIn && isUserAdmin)
+                {
+                    <td>
+                        <a class="btn btn-primary m-1" style="width:100px" asp-action="Edit" asp-route-id="@item.JobCategoryId">Edit</a> |
+                        <a class="btn btn-success  m-1" style="width:100px" asp-action="Details" asp-route-id="@item.JobCategoryId">Details</a> |
+                        <a class="btn btn-danger  m-1" style="width:100px" asp-action="Delete" asp-route-id="@item.JobCategoryId">Delete</a> |
+                        <a class="btn btn-primary  m-1" style="width:100px" asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="GetJobsOfCategory" asp-route-filterCategoryId="@item.JobCategoryId">Manage</a>
+            </td>
+            }
+            else{
+                    <td> <a class="btn btn-success  " asp-action="Details" asp-route-id="@item.JobCategoryId">Details</a> </td>
+            }
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,29 @@
+﻿@using JobPortal.Areas.PortalMgmt.ViewModels
+
+@model ShowPostJobsViewModel
+@{
+}
+
+<h1>List of Jobs in the Category</h1>
+
+<div class="row">
+    <div class="col-8">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="JobCategoryId" class="control-label"></label>
+                <select asp-for="JobCategoryId" asp-items="ViewBag.CategoriesCollection" class="form-control"></select>
+                <span asp-validation-for="JobCategoryId" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Show Jobs</button>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

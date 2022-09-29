@@ -1,0 +1,224 @@
+﻿@page
+@using JobPortal.Areas.PortalMgmt.ViewModels
+@model ShowPostJobsViewModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@using Microsoft.AspNetCore.Identity
+@using JobPortal.Models.Enums
+
+@*----- to find if user is logged in *@
+@inject SignInManager<IdentityUser> _signInManager
+
+@*----- gets the user object to see properties, roles *@
+@inject UserManager<IdentityUser> _userManager
+
+@{
+    bool isLoggedIn = _signInManager.IsSignedIn(this.User);
+
+    bool isUserAdmin = false;
+    IdentityUser user = await _userManager.GetUserAsync(this.User);         // gets the Logged In User
+    if (user != null)
+    {
+        isUserAdmin = await _userManager.IsInRoleAsync(user, MyIdentityRoleNames.PortalAdmin.ToString());
+    }
+
+}
+
+<div class="container">
+    <div class="d-flex align-items-center bg-img-1"
+         style="background-image: url('https://i.postimg.cc/XNxsjng9/h1-hero.jpg');
+                            height: 100vh;">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-lg-9 col-md-10">
+                    <div class="hero__caption">
+                        <h1>Find the most exciting startup jobs</h1>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <form method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                
+                                    <div class="form-group d-inline">
+                                        <input type="text" asp-for="SearchKey" class="form-control d-inline" placeholder="Search JobTitle or Keyword..." />
+                                        <button class="btn btn-success m-3 d-inline" asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="IndexUser" asp-route-id="SearchKey">Search</button>
+
+                                    </div>
+                                
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<pre> </pre>
+<div class="our-services section-pad-t30">
+    <div class="container">
+        <!-- Section Tittle -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-tittle text-center">
+                    <h2>Browse Top Company Jobs </h2>
+                    <pre> </pre>
+                </div>
+            </div>
+        </div>
+        <div class="card-deck d-flex justify-contnet-center">
+                <div class="card">
+                    <div class="card-body text-center">
+                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img h-50" src="~/Image/Birlasoft_logo.png"></a>
+                    <h6 class="p-4">Birlasoft</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="text-body">Digital Technology services and consulting company</p>
+                    </div>
+                </div>
+            <div class="card">
+                <div class="card-body text-center">
+                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img min-h-50" src="~/Image/Infosys_logo.jpg"></a>
+                    <h6 class="p-4">Infosys</h6>
+                </div>
+                <div class="card-body text-center">
+                    <p class="text-body">Global Leader in Next-gen Digital services</p>
+                </div>
+            </div>
+            <div class="card">
+                    <div class="card-body text-center">
+                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img h-50" src="~/Image/Cognizant_logo.png"></a>
+                    <h6 class="p-4">Cognizant</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="text-body">Leading ITeS company with global presence</p>
+                    </div>
+                </div>
+            <div class="card">
+                <div class="card-body text-center">
+                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img min-h-50" src="~/Image/techm_logo.jpg"></a>
+                    <h6 class="p-4 text-center">Tech Mahindra</h6>
+                </div>
+                <div class="card-body text-center">
+                    <p class="text-body">Global Leader in Next-gen Digital services</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body text-center">
+                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img min-h-50" src="~/Image/tcs_logo220620168.jpg"></a>
+                    <h6 class="p-4">TCS</h6>
+                </div>
+                <div class="card-body text-center">
+                    <p class="text-body">Global Leader in Services and Consulting</p>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<!-- Category Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <h1 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Explore By Category</h1>
+        <div class="row g-4">
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                <a class="cat-item rounded p-4" href="">
+                    <i class="fa fa-3x fa-mail-bulk text-primary mb-4"></i>
+                    <h6 class="mb-3">Marketing</h6>
+                    <p class="mb-0">123 Vacancy</p>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+                <a class="cat-item rounded p-4" href="">
+                    <i class="fa fa-3x fa-headset text-primary mb-4"></i>
+                    <h6 class="mb-3">Customer Service</h6>
+                    <p class="mb-0">123 Vacancy</p>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+                <a class="cat-item rounded p-4" href="">
+                    <i class="fa fa-3x fa-user-tie text-primary mb-4"></i>
+                    <h6 class="mb-3">Human Resource</h6>
+                    <p class="mb-0">123 Vacancy</p>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
+                <a class="cat-item rounded p-4" href="">
+                    <i class="fa fa-3x fa-tasks text-primary mb-4"></i>
+                    <h6 class="mb-3">Project Management</h6>
+                    <p class="mb-0">123 Vacancy</p>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                <a class="cat-item rounded p-4" href="">
+                    <i class="fa fa-3x fa-chart-line text-primary mb-4"></i>
+                    <h6 class="mb-3">Business Development</h6>
+                    <p class="mb-0">123 Vacancy</p>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+                <a class="cat-item rounded p-4" href="">
+                    <i class="fa fa-3x fa-hands-helping text-primary mb-4"></i>
+                    <h6 class="mb-3">Sales & Communication</h6>
+                    <p class="mb-0">123 Vacancy</p>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+                <a class="cat-item rounded p-4" href="">
+                    <i class="fa fa-3x fa-book-reader text-primary mb-4"></i>
+                    <h6 class="mb-3">Teaching & Education</h6>
+                    <p class="mb-0">123 Vacancy</p>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
+                <a class="cat-item rounded p-4" href="">
+                    <i class="fa fa-3x fa-drafting-compass text-primary mb-4"></i>
+                    <h6 class="mb-3">Design & Creative</h6>
+                    <p class="mb-0">123 Vacancy</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- About Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-5 align-items-center align-content-center">
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                <div class="row g-0 about-bg rounded overflow-hidden">
+                    <div class="col-6 text-start">
+                        <img class="img-fluid w-100" src="~/assets/img/about-1.jpg">
+                    </div>
+                    <div class="col-6 text-start">
+                        <img class="img-fluid" src="~/assets/img/about-2.jpg" style="width: 85%; margin-top: 15%;">
+                    </div>
+                    <div class="col-6 text-end">
+                        <img class="img-fluid" src="~/assets/img/about-3.jpg" style="width: 85%;">
+                    </div>
+                    <div class="col-6 text-end">
+                        <img class="img-fluid w-100" src="~/assets/img/about-4.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                <h1 class="mb-4">We Help To Get The Best Job And Find A Talent</h1>
+                <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Tempor erat elitr rebum at clita</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Aliqu diam amet diam et eos</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Clita duo justo magna dolore erat amet</p>
+                <a class="btn btn-primary py-3 px-5 mt-3" href="">Read More</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- About End -->
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

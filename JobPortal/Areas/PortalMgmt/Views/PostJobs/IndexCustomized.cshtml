@@ -1,0 +1,90 @@
+﻿@model IEnumerable<JobPortal.Models.PostJob>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@using Microsoft.AspNetCore.Identity
+@using JobPortal.Models.Enums
+
+@*----- to find if user is logged in *@
+@inject SignInManager<IdentityUser> _signInManager
+
+@*----- gets the user object to see properties, roles *@
+@inject UserManager<IdentityUser> _userManager
+
+@{
+    bool isLoggedIn = _signInManager.IsSignedIn(this.User);
+
+    bool isUserAdmin = false;
+    IdentityUser user = await _userManager.GetUserAsync(this.User);         // gets the Logged In User
+    if (user != null)
+    {
+        isUserAdmin = await _userManager.IsInRoleAsync(user, MyIdentityRoleNames.PortalAdmin.ToString());
+    }
+
+}
+
+
+<h1>Index</h1>
+@if (isLoggedIn && isUserAdmin)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
+<div class="card-rows">
+    @if(Model.Count()==0){
+        <div class="display-1">
+        <h1 class="text-danger">Sorry No Jobs availbale for your search.. ! Please try with a different keyword</h1>
+        </div>
+    }
+    @foreach (var job in Model)
+    {
+        
+        <div class="card bg-success mt-2">
+            <div class="card-header h3 bg-warning d-inline-flex">
+                @job.JobTitle
+                <div class="card-img float-md-right">
+                    <img class="float-right" src="@("~/image/" + job.Company.CompanyImage)" asp-append-version="true" width="100px" height="50px" />
+                </div>
+            </div>
+            <div class="card-body">
+
+                <div class="card-columns text-white">
+                    @Html.DisplayNameFor(modelItem => job.JobTitle) : @job.JobTitle
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.JobCategory) : @job.JobCategory.JobCategoryName
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.JobDescription) : @job.JobDescription
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.Qualification) :@job.Qualification
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.Location) : @job.Location
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.LastDate) : @job.LastDate
+                </div>
+
+            </div>
+            <div class="card-footer">
+                @if (isLoggedIn && isUserAdmin)
+                {
+                    <a class="btn btn-sm btn-group-sm btn-primary" style="width:100px" asp-action="Edit" asp-route-id="@job.PostJobId">Edit</a>
+                    <a class="btn btn-sm btn-group-sm btn-primary" style="width:100px" asp-action="Details" asp-route-id="@job.PostJobId">Details</a>
+                    <a class="btn btn-sm btn-group-sm btn-primary" style="width:100px" asp-action="Delete" asp-route-id="@job.PostJobId">Delete</a>
+                }
+                else
+                {
+                    @if (!isUserAdmin)
+                    {
+                        <a class="btn btn-sm btn-group-sm btn-warning" style="width:100px" asp-controller="ApplyJobs" asp-action="Create">Apply Now</a>
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>
+@if (isUserAdmin)
+{
+    <a asp-area="PortalMgmt" asp-controller="JobCategories" asp-action="Index">List of Job Categories</a>
+}

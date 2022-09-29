@@ -1,0 +1,168 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using JobPortal.Models.Enums
+
+@*----- to find if user is logged in *@
+@inject SignInManager<IdentityUser> _signInManager
+
+@*----- gets the user object to see properties, roles *@
+@inject UserManager<IdentityUser> _userManager
+
+@{
+    bool isLoggedIn = _signInManager.IsSignedIn(this.User);
+
+    bool isUserAdmin = false;
+    IdentityUser user = await _userManager.GetUserAsync(this.User);         // gets the Logged In User
+    if (user != null)
+    {
+        isUserAdmin = await _userManager.IsInRoleAsync(user, MyIdentityRoleNames.PortalAdmin.ToString());
+    }
+
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] -JobPortal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+   
+    <link href="~/assets/lib/animate/animate.min.css" rel="stylesheet" />
+
+    <link href="~/assets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="~/assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-warning border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-page="/Index">JobPortal</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Contact</a>
+                        </li>
+
+                        <!-------------------------------------ADMIN------------------------------------------------------------>
+                        @if (isLoggedIn && isUserAdmin)
+                        {
+                            
+                            
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Admin
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="Admins" asp-action="Index">Admin Login</a>
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="UserTypes" asp-action="Index">User Type</a>
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="UserTables" asp-action="Index">User Table</a>
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="Companies" asp-action="Index">Company</a>
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="JobNatures" asp-action="Index">Job Nature</a>
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="JobCategories" asp-action="Index">Job Category</a>
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="JobRequirements" asp-action="Index">Job Requirement</a>
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="Index">Post Jobs</a>
+                                        <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="ApplyJobs" asp-action="Index">Apply Jobs</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="~/MyJobCategoriesApiDemo.html">
+                                        API Job Categories 
+                                    </a>
+                                    <a class="dropdown-item" href="~/MyApplyJobApiDemo.html">
+                                        API Apply Jobs
+                                    </a>
+                                    </div>
+                                </li>
+                                <div>
+                                <li>
+                                <a asp-area="PortalMgmt" asp-controller="UserTables" asp-action="Create">User Register</a>
+                                </li>
+                    </div>
+                            }
+                        <!------------------------------------------------------------USER----------------------------------------------------------------->
+                        
+                        @if (isLoggedIn && !isUserAdmin)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Users
+                                </a>
+                                <div class="dropdown-menu">
+
+
+                                    
+                                    <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="JobCategories" asp-action="Index">Job Category</a>
+                                    <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="Companies" asp-action="Index">Company</a>
+                                    <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="Index">Post Jobs</a>
+                                    <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="ApplyJobs" asp-action="Index">Apply Jobs</a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                </div>
+                <partial name="_LoginPartial" />
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+   <footer class="border-top footer bg-warning text-muted">
+        <div class="container">
+            &copy; 2022 - JobPortal - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

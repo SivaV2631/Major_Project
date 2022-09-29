@@ -1,0 +1,203 @@
+﻿@model IEnumerable<JobPortal.Models.PostJob>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+@using Microsoft.AspNetCore.Identity
+@using JobPortal.Models.Enums
+
+@*----- to find if user is logged in *@
+@inject SignInManager<IdentityUser> _signInManager
+
+@*----- gets the user object to see properties, roles *@
+@inject UserManager<IdentityUser> _userManager
+
+@{
+    bool isLoggedIn = _signInManager.IsSignedIn(this.User);
+
+    bool isUserAdmin = false;
+    IdentityUser user = await _userManager.GetUserAsync(this.User);         // gets the Logged In User
+    if (user != null)
+    {
+        isUserAdmin = await _userManager.IsInRoleAsync(user, MyIdentityRoleNames.PortalAdmin.ToString());
+    }
+
+}
+@if (isLoggedIn && isUserAdmin)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Company)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Vacancies)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PostCreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Qualification)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MinSalary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaxSalary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WebUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobRequirement)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobNature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobCategory)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company.CompanyName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Vacancies)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostCreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Qualification)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MinSalary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MaxSalary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.WebUrl)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobRequirement.JobRequirementDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobNature.JobNatureName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobCategory.JobCategoryName)
+                </td>
+                @if (isLoggedIn && isUserAdmin)
+                {
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.PostJobId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.PostJobId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.PostJobId">Delete</a>
+                    </td>
+
+                }
+                else
+                {
+                    @if (isLoggedIn)
+                    {
+
+                        <td>
+                            <button asp-area="PortalMgmt" asp-controller="ApplyJobs" asp-action="Index">Apply Now</button>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>*@
+<div class="card-rows">
+    @foreach (var job in Model)
+    {
+        <div class="card bg-success mt-2">
+            <div class="card-header bg-light">
+                <p class="h4 d-inline">@job.JobTitle</p>
+                <p class="h6 d-inline text-danger">@job.Company.CompanyName</p>
+                <div class="card-img float-md-right d-inline">
+                    <img class="float-right" src="@("~/image/" + job.Company.CompanyImage)" asp-append-version="true" width="100px" height="50px" />
+                </div>
+            </div>
+            <div class="card-body">
+
+                <div class="card-columns  text-white">
+                    <div class="col-1 d-inline "><p class="form-text font-weight-bold">@Html.DisplayNameFor(modelItem => job.JobTitle) : </p> @job.JobTitle</div>
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.JobCategory) : @job.JobCategory.JobCategoryName
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.JobDescription) : @job.JobDescription
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.Qualification) :@job.Qualification
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.Location) : @job.Location
+                    <br />
+                    @Html.DisplayNameFor(modelItem => job.LastDate) : @job.LastDate
+                </div>
+
+            </div>
+            <div class="card-footer">
+                <div class="float-right">
+                    @if (isLoggedIn && isUserAdmin)
+                    {
+                        <a class="btn btn-sm btn-group-sm btn-primary" style="width:100px" asp-action="Edit" asp-route-id="@job.PostJobId">Edit</a>
+                        <a class="btn btn-sm btn-group-sm btn-primary" style="width:100px" asp-action="Details" asp-route-id="@job.PostJobId">Details</a>
+                        <a class="btn btn-sm btn-group-sm btn-primary" style="width:100px" asp-action="Delete" asp-route-id="@job.PostJobId">Delete</a>
+                    }
+                    else
+                    {
+                        @if (isLoggedIn && !isUserAdmin)
+                        {
+                            <a class="btn btn-sm btn-group-sm btn-warning" style="width:100px" asp-controller="ApplyJobs" asp-action="Create">Apply Now</a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if(isUserAdmin){
+<a asp-area="PortalMgmt" asp-controller="JobCategories" asp-action="Index">List of Job Categories</a>
+}
