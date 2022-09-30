@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobPortal.Data;
 using JobPortal.Models;
+using Microsoft.Extensions.Logging;
 
 namespace JobPortal.Areas.PortalMgmt.Controllers
 {
@@ -14,10 +15,12 @@ namespace JobPortal.Areas.PortalMgmt.Controllers
     public class ApplyJobsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<ApplyJobsController> _logger;
 
-        public ApplyJobsController(ApplicationDbContext context)
+        public ApplyJobsController(ApplicationDbContext context, ILogger<ApplyJobsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: PortalMgmt/ApplyJobs
@@ -49,6 +52,7 @@ namespace JobPortal.Areas.PortalMgmt.Controllers
         // GET: PortalMgmt/ApplyJobs/Create
         public IActionResult Create()
         {
+           
             ViewData["PostJobId"] = new SelectList(_context.PostJobs, "PostJobId", "JobTitle");
             return View();
         }
@@ -62,9 +66,11 @@ namespace JobPortal.Areas.PortalMgmt.Controllers
         {
             if (ModelState.IsValid)
             {
+                
                 _context.Add(applyJob);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+                
             }
             ViewData["PostJobId"] = new SelectList(_context.PostJobs, "PostJobId", "JobTitle", applyJob.PostJobId);
             return View(applyJob);

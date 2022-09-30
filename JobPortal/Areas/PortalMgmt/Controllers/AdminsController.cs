@@ -25,6 +25,34 @@ namespace JobPortal.Areas.PortalMgmt.Controllers
         {
             return View(await _context.Admins.ToListAsync());
         }
+ 
+
+        //GET: PortalMgmt/GetCurrentAdmin
+        public async Task<IActionResult> IndexAdmin(string? SearchKey)
+        {
+            if (string.IsNullOrEmpty(SearchKey))
+                SearchKey = "admin@demo.com";
+            if (!string.IsNullOrEmpty(SearchKey))
+            {
+                var adminList = await _context.Admins.ToListAsync();
+                var loggedInAdmin = adminList.Where(x => x.EmailAddress.ToLower().Equals(SearchKey)).ToList().FirstOrDefault();
+                if (loggedInAdmin != null)
+                {
+                    //return Edit(loggedInAdmin.AdminId).Result;
+                    //return RedirectToAction(nameof(Edit), loggedInAdmin.AdminId);
+                     return View(loggedInAdmin);
+                    
+                }
+              
+
+            }
+            else
+            {
+                return NotFound();
+            }
+            return NotFound();
+
+        }
 
         // GET: PortalMgmt/Admins/Details/5
         public async Task<IActionResult> Details(int? id)

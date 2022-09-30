@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using JobPortal.Models.Enums
+@using JobPortal.Areas.PortalMgmt.Controllers
 
 @*----- to find if user is logged in *@
 @inject SignInManager<IdentityUser> _signInManager
@@ -7,8 +8,15 @@
 @*----- gets the user object to see properties, roles *@
 @inject UserManager<IdentityUser> _userManager
 
+
+
+
 @{
+
+    //int adminId = AdminsController(this.Context).GetAdmin(this.User.Identity.Name.ToString());
+
     bool isLoggedIn = _signInManager.IsSignedIn(this.User);
+     string userName = this.User.Identity.Name;
 
     bool isUserAdmin = false;
     IdentityUser user = await _userManager.GetUserAsync(this.User);         // gets the Logged In User
@@ -18,6 +26,7 @@
     }
 
 }
+
 
 
 <!DOCTYPE html>
@@ -57,7 +66,8 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-warning border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">JobPortal</a>
+                <img class="carousel-control-next-icon" src="~/Image/hiring.png" />
+                <a class="navbar-brand" asp-area="" asp-page="/Index"><sub>JobPortal</sub></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -75,7 +85,9 @@
                         @if (isLoggedIn && isUserAdmin)
                         {
                             
-                            
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-for="SearchKey" asp-area="PortalMgmt" asp-controller="Admins" asp-action="IndexAdmin" asp-route-id="SearchKey">Update Profile</a>
+                            </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
                                         Admin
@@ -97,22 +109,16 @@
                                    asp-area="PortalMgmt" asp-controller="JobRequirements" asp-action="Index">Job Requirement</a>
                                         <a class="dropdown-item"
                                    asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="Index">Post Jobs</a>
+                                    <a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="Contacts" asp-action="Index">Messages</a>
                                         <a class="dropdown-item"
-                                   asp-area="PortalMgmt" asp-controller="ApplyJobs" asp-action="Index">Apply Jobs</a>
+                                   asp-area="PortalMgmt" asp-controller="ApplyJobs" asp-action="Index">Applied Jobs</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="~/MyJobCategoriesApiDemo.html">
                                         API Job Categories 
                                     </a>
-                                    <a class="dropdown-item" href="~/MyApplyJobApiDemo.html">
-                                        API Apply Jobs
-                                    </a>
                                     </div>
                                 </li>
-                                <div>
-                                <li>
-                                <a asp-area="PortalMgmt" asp-controller="UserTables" asp-action="Create">User Register</a>
-                                </li>
-                    </div>
                             }
                         <!------------------------------------------------------------USER----------------------------------------------------------------->
                         
@@ -124,16 +130,17 @@
                                 </a>
                                 <div class="dropdown-menu">
 
-
-                                    
+                                    <a class ="dropdown-item"
+                                    asp-area="PortalMgmt" asp-controller="UserTables" asp-action="Create">Update Profile</a>
+         
                                     <a class="dropdown-item"
                                    asp-area="PortalMgmt" asp-controller="JobCategories" asp-action="Index">Job Category</a>
                                     <a class="dropdown-item"
                                    asp-area="PortalMgmt" asp-controller="Companies" asp-action="Index">Company</a>
                                     <a class="dropdown-item"
-                                   asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="Index">Post Jobs</a>
-                                    <a class="dropdown-item"
-                                   asp-area="PortalMgmt" asp-controller="ApplyJobs" asp-action="Index">Apply Jobs</a>
+                                   asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="Index">Jobs List</a>
+                                    @*@<a class="dropdown-item"
+                                   asp-area="PortalMgmt" asp-controller="ApplyJobs" asp-action="Index">Apply Job</a>*@
                                 </div>
                             </li>
                         }

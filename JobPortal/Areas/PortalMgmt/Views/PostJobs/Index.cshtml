@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Jobs</h1>
 @using Microsoft.AspNetCore.Identity
 @using JobPortal.Models.Enums
 
@@ -28,7 +28,7 @@
 @if (isLoggedIn && isUserAdmin)
 {
     <p>
-        <a asp-action="Create">Create New</a>
+        <a class="btn btn-outline-primary" asp-action="Create">Create New Job</a>
     </p>
 }
 @*<table class="table">
@@ -163,7 +163,7 @@
             <div class="card-body">
 
                 <div class="card-columns  text-white">
-                    <div class="col-1 d-inline "><p class="form-text font-weight-bold">@Html.DisplayNameFor(modelItem => job.JobTitle) : </p> @job.JobTitle</div>
+                    @Html.DisplayNameFor(modelItem => job.JobTitle) :  @job.JobTitle
                     <br />
                     @Html.DisplayNameFor(modelItem => job.JobCategory) : @job.JobCategory.JobCategoryName
                     <br />

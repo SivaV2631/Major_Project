@@ -35,7 +35,7 @@ namespace JobPortal.Areas.PortalMgmt.Controllers
 
         public async Task<IActionResult> IndexUser(string searchKey)
         {
-            var applicationDbContext = _context.PostJobs.Include(p => p.Company).Include(p => p.JobCategory).Include(p => p.JobNature).Include(p => p.JobRequirement);
+           var applicationDbContext = _context.PostJobs.Include(p => p.Company).Include(p => p.JobCategory).Include(p => p.JobNature).Include(p => p.JobRequirement);
             return await GetJobsByJobSearch(searchKey);
         }
 

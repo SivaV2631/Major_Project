@@ -31,52 +31,57 @@
     <p>
         <a asp-action="Create">Create New</a>
     </p>
+
+    <table class="table table-active table-bordered table-striped" >
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicantName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ContactNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AppliedAt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PostJob)
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApplicantName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ContactNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AppliedAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PostJob.JobTitle)
+                    </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ApplyJobId">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.ApplyJobId">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.ApplyJobId">Delete</a>
+                        </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
-<table class="table table-active table-bordered table-striped" >
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ApplicantName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContactNo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AppliedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PostJob)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApplicantName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AppliedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PostJob.JobTitle)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ApplyJobId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ApplyJobId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ApplyJobId">Delete</a>
-            </td>
-        </tr>
+else{
+    <h3 class="text-success">Your Job application is submitted successfully</h3>
 }
-    </tbody>
-</table>

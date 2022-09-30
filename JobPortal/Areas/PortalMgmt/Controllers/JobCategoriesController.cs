@@ -7,17 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobPortal.Data;
 using JobPortal.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobPortal.Areas.PortalMgmt.Controllers
-{
+{   
     [Area("PortalMgmt")]
+    [Authorize(Roles ="PortalAdmin")]  
     public class JobCategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<JobCategoriesController> _logger;
 
-        public JobCategoriesController(ApplicationDbContext context)
+        public JobCategoriesController(ApplicationDbContext context,ILogger<JobCategoriesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: PortalMgmt/JobCategories
@@ -59,10 +64,21 @@ namespace JobPortal.Areas.PortalMgmt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("JobCategoryId,JobCategoryName,Description")] JobCategory jobCategory)
         {
+            // Sanitize the data
+            jobCategory.JobCategoryName = jobCategory.JobCategoryName.Trim();
+
+            // Validation Checks - Server-side validation
+            bool duplicateExists = _context.JobCategories.Any(c => c.JobCategoryName == jobCategory.JobCategoryName);
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("CategoryName", "Duplicate Category Found!");
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(jobCategory);
+                _context.JobCategories.Add(jobCategory);
                 await _context.SaveChangesAsync();
+                _logger.LogInformation($"Created a New Category: ID = {jobCategory.JobCategoryId} !");
                 return RedirectToAction(nameof(Index));
             }
             return View(jobCategory);

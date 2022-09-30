@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobPortal.Data;
 using JobPortal.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobPortal.Areas.PortalMgmt.Controllers
 {
     [Area("PortalMgmt")]
+    [Authorize]
     public class UserTablesController : Controller
     {
         private readonly ApplicationDbContext _context;

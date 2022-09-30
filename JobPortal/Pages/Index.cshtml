@@ -33,20 +33,32 @@
         <div class="container">
             <div class="row">
                 <div class="col-xl-6 col-lg-9 col-md-10">
-                    <div class="hero__caption">
-                        <h1>Find the most exciting startup jobs</h1>
+                    <div>
+                        <p class="display-2">Find the most exciting startup jobs</p>
                     </div>
                     <div class="row">
                         <div class="col-8">
                             <form method="post">
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                
-                                    <div class="form-group d-inline">
+
+                                @*@<div class="input-group d-inline">
                                         <input type="text" asp-for="SearchKey" class="form-control d-inline" placeholder="Search JobTitle or Keyword..." />
                                         <button class="btn btn-success m-3 d-inline" asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="IndexUser" asp-route-id="SearchKey">Search</button>
 
+                                    </div>*@
+                                @if (isLoggedIn && !isUserAdmin)
+                                {
+                                    <div class="input-group">
+                                        <input type="text" asp-for="SearchKey" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                                        
+                                        <button class="btn btn-primary" asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="IndexUser" asp-route-id="SearchKey">search</button>
                                     </div>
-                                
+                                }else{
+                                    <div>
+                                        <a asp-area="Identity" asp-page="Manage/Login"></a>
+                                    </div>
+                                }
+
                             </form>
 
                         </div>
@@ -72,7 +84,7 @@
         <div class="card-deck d-flex justify-contnet-center">
                 <div class="card">
                     <div class="card-body text-center">
-                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img h-50" src="~/Image/Birlasoft_logo.png"></a>
+                    <a href="https://localhost:44306/PortalMgmt/PostJobs"><img class="card-img h-50" src="~/Image/Birlasoft_logo.png"></a>
                     <h6 class="p-4">Birlasoft</h6>
                     </div>
                     <div class="card-body text-center">
@@ -81,7 +93,7 @@
                 </div>
             <div class="card">
                 <div class="card-body text-center">
-                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img min-h-50" src="~/Image/Infosys_logo.jpg"></a>
+                    <a href="https://localhost:44306/PortalMgmt/PostJobs"><img class="card-img min-h-50" src="~/Image/Infosys_logo.jpg"></a>
                     <h6 class="p-4">Infosys</h6>
                 </div>
                 <div class="card-body text-center">
@@ -90,7 +102,7 @@
             </div>
             <div class="card">
                     <div class="card-body text-center">
-                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img h-50" src="~/Image/Cognizant_logo.png"></a>
+                    <a href="https://localhost:44306/PortalMgmt/PostJobs"><img class="card-img h-50" src="~/Image/Cognizant_logo.png"></a>
                     <h6 class="p-4">Cognizant</h6>
                     </div>
                     <div class="card-body text-center">
@@ -99,7 +111,7 @@
                 </div>
             <div class="card">
                 <div class="card-body text-center">
-                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img min-h-50" src="~/Image/techm_logo.jpg"></a>
+                    <a href="https://localhost:44306/PortalMgmt/PostJobs"><img class="card-img min-h-50" src="~/Image/techm_logo.jpg" asp-area="PortalMgmt" asp-controller="PostJobs" asp-action="IndexUser" asp-route-id="SearchKey"></a>
                     <h6 class="p-4 text-center">Tech Mahindra</h6>
                 </div>
                 <div class="card-body text-center">
@@ -108,14 +120,14 @@
             </div>
             <div class="card">
                 <div class="card-body text-center">
-                    <a href="https://localhost:44306/PortalMgmt/JobCategories"><img class="card-img min-h-50" src="~/Image/tcs_logo220620168.jpg"></a>
+                    <a href="https://localhost:44306/PortalMgmt/PostJobs"><img class="card-img min-h-50" src="~/Image/tcs_logo220620168.jpg"></a>
                     <h6 class="p-4">TCS</h6>
                 </div>
                 <div class="card-body text-center">
                     <p class="text-body">Global Leader in Services and Consulting</p>
                 </div>
             </div>
-           
+
         </div>
     </div>
 </div>
@@ -220,5 +232,5 @@
 
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+                    <partial name="_ValidationScriptsPartial" />
 }
