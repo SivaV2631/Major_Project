@@ -28,7 +28,7 @@ namespace JobPortal.Areas.PortalMgmt.Controllers
  
 
         //GET: PortalMgmt/GetCurrentAdmin
-        public async Task<IActionResult> IndexAdmin(string? SearchKey)
+        public async Task<IActionResult> IndexAdmin(string SearchKey)
         {
             if (string.IsNullOrEmpty(SearchKey))
                 SearchKey = "admin@demo.com";
